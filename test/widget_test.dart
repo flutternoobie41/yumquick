@@ -3,7 +3,7 @@ import 'package:food_delivery/app/app.dart';
 
 void main() {
   testWidgets('app starts and shows the brand name', (tester) async {
-    await tester.pumpWidget(const FoodDeliveryApp());
+    await tester.pumpWidget(const YumQUickApp());
 
     expect(find.text('YUMQUICK'), findsOneWidget);
   });

@@ -6,8 +6,8 @@ import 'package:food_delivery/app/theme/app_theme.dart';
 ///
 /// Routing and dependency injection are wired in here as the matching
 /// phases land.
-class FoodDeliveryApp extends StatelessWidget {
-  const FoodDeliveryApp({super.key});
+class YumQUickApp extends StatelessWidget {
+  const YumQUickApp({super.key});
 
   @override
   Widget build(BuildContext context) {
