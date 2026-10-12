@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/app/theme/app_colors.dart';
-import 'package:food_delivery/app/theme/app_theme.dart';
+import 'package:yum_quick/app/theme/app_colors.dart';
+import 'package:yum_quick/app/theme/app_theme.dart';
 
 /// Root widget of the app.
 ///

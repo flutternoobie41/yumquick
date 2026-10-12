@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/app/theme/app_colors.dart';
-import 'package:food_delivery/app/theme/app_dimens.dart';
-import 'package:food_delivery/app/theme/app_text_styles.dart';
+import 'package:yum_quick/app/theme/app_colors.dart';
+import 'package:yum_quick/app/theme/app_dimens.dart';
+import 'package:yum_quick/app/theme/app_text_styles.dart';
 
 /// Material 3 theme built from the Figma tokens.
 ///
