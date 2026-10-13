@@ -6,6 +6,7 @@ import 'package:yum_quick/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:yum_quick/features/auth/presentation/screens/login_screen.dart';
 import 'package:yum_quick/features/auth/presentation/screens/splash_screen.dart';
 import 'package:yum_quick/features/cart/presentation/screens/cart_screen.dart';
+import 'package:yum_quick/features/cart/presentation/screens/confirm_order_screen.dart';
 import 'package:yum_quick/features/food/domain/entities/food_item.dart';
 import 'package:yum_quick/features/food/presentation/bloc/food_list_bloc.dart';
 import 'package:yum_quick/features/food/presentation/cubit/food_detail_cubit.dart';
@@ -77,9 +78,19 @@ GoRouter createRouter({
           ),
         ],
       ),
-        GoRoute(
+      GoRoute(
         path: AppRoutes.cart,
         builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.cart,
+        builder: (context, state) => const CartScreen(),
+        routes: [
+          GoRoute(
+            path: 'confirm',
+            builder: (context, state) => const ConfirmOrderScreen(),
+          ),
+        ],
       ),
     ],
   );
