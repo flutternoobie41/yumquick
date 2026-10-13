@@ -71,7 +71,7 @@ lib/
     │   ├── domain/           # User, AuthRepository
     │   └── presentation/     # AuthBloc, login and splash screens, login form
     ├── food/
-    │   ├── data/             # RecipeModel, remote data source, repository impl
+    │   ├── data/             # RecipeModel, remote + local (offline cache) data sources, repository impl
     │   ├── domain/           # FoodItem, FoodCategory, FoodQuery, FoodRepository
     │   └── presentation/     # FoodListBloc, FoodDetailCubit, Home and detail screens, screens,widgets
     └── cart/
@@ -136,6 +136,7 @@ An item can appear in more than one category. _Final rules are confirmed in Phas
 - **Undo:** removing a line remembers it and its position, so Undo puts it back in the same place. Quantity changes never remove a line; only the swipe does, so every removal can be undone.
 - **Place Order is local:** it confirms, returns to Home and empties the cart. No API call, as the task asks.
 
+- **Offline support:** the first page of the default list is saved to Hive after every successful load. When that page can't be loaded because the network is down, the saved items are shown with an offline banner, and pull-to-refresh replaces them once back online. Only network failures fall back to the cache; a 401 still logs out. Other queries (category, search, next page) need the network and show the error view with retry. Images come from `cached_network_image`'s disk cache, so photos seen before also load offline.
 _More added as the build progresses._
 
 ## Skipped
