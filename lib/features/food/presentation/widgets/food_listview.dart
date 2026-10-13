@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:yum_quick/app/router.dart';
 import 'package:yum_quick/app/theme/app_colors.dart';
 import 'package:yum_quick/app/theme/app_dimens.dart';
 import 'package:yum_quick/core/widgets/empty_view.dart';
@@ -198,8 +200,14 @@ class _FoodGrid extends StatelessWidget {
       sliver: SliverGrid(
         gridDelegate: _gridDelegate,
         delegate: SliverChildBuilderDelegate(
-          (context, index) => FoodCard(item: items[index]),
-          childCount: items.length,
+         (context, index) {
+            final item = items[index];
+            return FoodCard(
+              item: item,
+              onTap: () =>
+                  context.push(AppRoutes.foodDetail(item.id), extra: item),
+            );
+          },
         ),
       ),
     );
