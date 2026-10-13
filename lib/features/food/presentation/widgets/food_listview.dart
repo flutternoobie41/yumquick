@@ -208,6 +208,7 @@ class _FoodGrid extends StatelessWidget {
                   context.push(AppRoutes.foodDetail(item.id), extra: item),
             );
           },
+          childCount: items.length
         ),
       ),
     );
