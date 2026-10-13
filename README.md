@@ -11,7 +11,7 @@ A Flutter app (Android, iOS optional) built from the YumQuick Food Delivery UI K
 - [x] Phase 2: auth (login with validation, auto-login, log out on 401)
 - [x] Phase 3: food list (pagination, debounced search, categories, sort, skeletons, pull-to-refresh, error retry)
 - [X] Phase 4: food detail (hero image, details, quantity, Add to Cart)
-- [ ] Phase 5: cart and Confirm Order (persistence, swipe to delete with undo)
+- [X] Phase 5: cart and Confirm Order (persistence, swipe to delete with undo)
 - [ ] Phase 6: offline support (cached first page, offline banner)
 - [ ] Phase 7: remaining tests, README, release APK
 
@@ -70,11 +70,14 @@ lib/
     │   ├── data/             # models, remote + local data sources, repository impl
     │   ├── domain/           # User, AuthRepository
     │   └── presentation/     # AuthBloc, login and splash screens, login form
-    └── food/
-        ├── data/             # RecipeModel, remote data source, repository impl
-        ├── domain/           # FoodItem, FoodCategory, FoodQuery, FoodRepository
-        └── presentation/     # FoodListBloc, FoodDetailCubit, Home and detail screens, widgets
-```
+    ├── food/
+    │   ├── data/             # RecipeModel, remote data source, repository impl
+    │   ├── domain/           # FoodItem, FoodCategory, FoodQuery, FoodRepository
+    │   └── presentation/     # FoodListBloc, FoodDetailCubit, Home and detail screens, screens,widgets
+    └── cart/
+        ├── data/             # CartItemModel, Hive data source, repository impl
+        ├── domain/           # CartItem, Cart (totals), CartRepository
+        └── presentation/     # CartCubit, Cart and Confirm Order screens, widgets
 
 - **data:** DTOs, remote and local data sources, repository implementations.
 - **domain:** entities and repository contracts, with no Flutter or Dio imports.
@@ -127,6 +130,11 @@ An item can appear in more than one category. _Final rules are confirmed in Phas
 - **Stale responses:** each new query gets a request id and older responses are dropped, so a slow request never overwrites newer results.
 
 - **Detail without a second request:** the list already returns full recipes, so the card passes its item to the detail screen, which opens instantly. `GET /recipes/{id}` is used only when the screen opens without one (deep link) and for retry.
+
+- **Cart pricing:** tax and fees are 5% of the subtotal and delivery is a flat $2.99 (both $0 for an empty cart), all rounded to cents. The rules live in the pure `Cart` class and are unit tested.
+- **Cart storage:** the cart is saved to a Hive box as one JSON string after every change, so no Hive type adapters are needed. Unreadable data starts an empty cart instead of crashing.
+- **Undo:** removing a line remembers it and its position, so Undo puts it back in the same place. Quantity changes never remove a line; only the swipe does, so every removal can be undone.
+- **Place Order is local:** it confirms, returns to Home and empties the cart. No API call, as the task asks.
 
 _More added as the build progresses._
 
