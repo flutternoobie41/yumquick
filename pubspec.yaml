@@ -45,7 +45,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
+  
+  assets:
+    - assets/images/
   # League Spartan (SIL OFL 1.1, see assets/fonts/OFL.txt), static
   # weights used by the design. Bundled so text renders offline.
   fonts:

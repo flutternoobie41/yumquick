@@ -97,6 +97,7 @@ Categories from the design mapped to the API:
 - Best Seller row and the banner on Home
 - Token refresh: a 401 just logs you out, as the task asks
 - Offline mode for categories and search, only the first page is cached
+- **Bottom navigation bar and side drawer.** Most of their tabs (favourites, orders, profile, help) lead to screens outside the task's scope, and empty tabs would look unfinished. Cart and logout are in the Home header instead.
 - App icon (still the default one)
 - Didn't test on iOS
 - Release APK is signed with the debug key

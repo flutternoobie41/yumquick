@@ -27,10 +27,11 @@ abstract final class AppRoutes {
 GoRouter createRouter({
   required AuthBloc authBloc,
   required Listenable refreshListenable,
+  required ValueNotifier<bool> splashDone,
 }) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
-    refreshListenable: refreshListenable,
+    refreshListenable: Listenable.merge([refreshListenable, splashDone]),
     redirect: (context, state) {
       final location = state.matchedLocation;
       return switch (authBloc.state) {
@@ -47,7 +48,9 @@ GoRouter createRouter({
     routes: [
       GoRoute(
         path: AppRoutes.splash,
-        builder: (context, state) => const SplashScreen(),
+        builder: (context, state) => SplashScreen(
+          onFinished: () => splashDone.value = true,
+        ),
       ),
       GoRoute(
         path: AppRoutes.login,

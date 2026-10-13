@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yum_quick/app/app.dart';
 import 'package:yum_quick/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:yum_quick/features/auth/presentation/screens/splash_screen.dart';
 import 'package:yum_quick/features/cart/presentation/cubit/cart_cubit.dart';
 
 class _MockAuthBloc extends MockBloc<AuthEvent, AuthState>
@@ -30,6 +31,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('YUMQUICK'), findsOneWidget);
+    // The intro has finished, but the session is still unknown,
+    // so the app must stay on the splash.
+    expect(find.byType(SplashScreen), findsOneWidget);
   });
 }

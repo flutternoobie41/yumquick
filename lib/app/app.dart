@@ -28,15 +28,18 @@ class YumQUickApp extends StatefulWidget {
 class _YumQUickAppState extends State<YumQUickApp> {
   late final RouterRefresh _routerRefresh =
       RouterRefresh(widget.authBloc.stream);
+  final _splashDone = ValueNotifier<bool>(false); // ← new
   late final GoRouter _router = createRouter(
     authBloc: widget.authBloc,
     refreshListenable: _routerRefresh,
+    splashDone: _splashDone, // ← new
   );
 
   @override
   void dispose() {
     _router.dispose();
     _routerRefresh.dispose();
+    _splashDone.dispose(); // ← new
     super.dispose();
   }
 
