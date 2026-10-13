@@ -7,6 +7,17 @@ You can log in, browse and search dishes, open a dish, add it to the cart and pl
 **APK:** https://github.com/<USER>/<REPO>/releases/latest
 **Login:** `emilys` / `emilyspass`
 
+## How to use
+
+- **Search:** type in the search bar on Home. Results update as you type.
+- **Filter:** tap a category (Snacks, Meal, Vegan, Dessert, Drinks). Tap it again to clear it.
+- **Sort:** use Sort By above the list.
+- **Refresh:** pull down on the list.
+- **Add to cart:** open a dish, pick the quantity, tap Add to Cart.
+- **Remove from cart:** swipe an item **left** in the cart. Tap **Undo** in the snackbar to bring it back.
+- **Change quantity:** use − / + in the cart (− stops at 1; swipe to remove).
+- **Log out:** the logout icon in the Home header.
+
 ## Running it
 
 Flutter `<FLUTTER VERSION>`
