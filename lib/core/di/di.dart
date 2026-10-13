@@ -6,6 +6,10 @@ import 'package:yum_quick/core/network/auth_interceptor.dart';
 import 'package:yum_quick/core/network/dio_client.dart';
 import 'package:yum_quick/core/session/session_event.dart';
 import 'package:yum_quick/core/storage/token_storage.dart';
+import 'package:yum_quick/features/auth/data/data_sources/auth_local_data_source.dart';
+import 'package:yum_quick/features/auth/data/data_sources/auth_remote_data_sources.dart';
+import 'package:yum_quick/features/auth/data/repository/repository_impl.dart';
+import 'package:yum_quick/features/auth/domain/repository/auth_repository.dart';
 
 /// Service locator for data sources and repositories.
 /// Blocs are not registered here; they are provided with BlocProvider.
@@ -13,6 +17,7 @@ final GetIt getIt = GetIt.instance;
 
 /// Registers app-wide services. Async because later phases open Hive here.
 Future<void> setupDependencies() async {
+  // Core
   getIt
     ..registerLazySingleton<FlutterSecureStorage>(
       () => const FlutterSecureStorage(),
@@ -27,5 +32,17 @@ Future<void> setupDependencies() async {
     )
     ..registerLazySingleton<Dio>(
       () => createDio(authInterceptor: getIt()),
+    );
+
+  // Auth
+  getIt
+    ..registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSource(getIt()),
+    )
+    ..registerLazySingleton<AuthLocalDataSource>(
+      () => AuthLocalDataSource(tokenStorage: getIt(), secureStorage: getIt()),
+    )
+    ..registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(remote: getIt(), local: getIt()),
     );
 }
