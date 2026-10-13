@@ -18,4 +18,7 @@ abstract final class AppRadius {
   /// Top corners of the light content sheet under the yellow header
   /// (estimated from the frame render; refine when building screens).
   static const double sheet = 30;
+
+    /// Text input fields (estimated from the frame render).
+  static const double field = 13;
 }
