@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:yum_quick/app/router.dart';
 import 'package:yum_quick/app/theme/app_colors.dart';
 import 'package:yum_quick/app/theme/app_dimens.dart';
+import 'package:yum_quick/app/theme/app_icons.dart';
+import 'package:yum_quick/core/widgets/app_svg_icon.dart';
 import 'package:yum_quick/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:yum_quick/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:yum_quick/features/food/presentation/bloc/food_list_bloc.dart';
@@ -29,7 +31,7 @@ class HomeHeader extends StatelessWidget {
           Row(
             children: [
               const Expanded(child: _SearchField()),
-               const SizedBox(width: 8),
+              const SizedBox(width: 8),
               const _CartButton(),
               const SizedBox(width: 4),
               IconButton.filled(
@@ -91,10 +93,7 @@ class _CartButton extends StatelessWidget {
         isLabelVisible: count > 0,
         label: Text('$count'),
         backgroundColor: AppColors.text2,
-        child: const Icon(
-          Icons.shopping_cart_outlined,
-          color: AppColors.orangeBase,
-        ),
+        child: const AppSvgIcon(AppIcons.cart, color: AppColors.orangeBase),
       ),
     );
   }
@@ -150,7 +149,8 @@ class _SearchFieldState extends State<_SearchField> {
         border: _border,
         enabledBorder: _border,
         focusedBorder: _border,
-        prefixIcon: const Icon(Icons.search_rounded, color: AppColors.orangeBase),
+        prefixIcon:
+            const Icon(Icons.search_rounded, color: AppColors.orangeBase),
         suffixIcon: _controller.text.isEmpty
             ? null
             : IconButton(

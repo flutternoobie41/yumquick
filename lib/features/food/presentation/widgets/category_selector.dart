@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yum_quick/app/theme/app_colors.dart';
+import 'package:yum_quick/app/theme/app_icons.dart';
+import 'package:yum_quick/core/widgets/app_svg_icon.dart';
 import 'package:yum_quick/features/food/domain/entities/food_category.dart';
 
 /// The design's row of category icons. Tapping the selected category
@@ -61,8 +63,10 @@ class _CategoryButton extends StatelessWidget {
                 color: isSelected ? AppColors.orangeBase : AppColors.yellow2,
                 borderRadius: const BorderRadius.all(Radius.circular(30)),
               ),
-              child: Icon(
+              alignment: Alignment.center,
+              child: AppSvgIcon(
                 _iconFor(category),
+                size: 34,
                 color: isSelected ? AppColors.font2 : AppColors.orangeBase,
               ),
             ),
@@ -74,13 +78,13 @@ class _CategoryButton extends StatelessWidget {
     );
   }
 
-  static IconData _iconFor(FoodCategory category) {
+ static String _iconFor(FoodCategory category) {
     return switch (category) {
-      FoodCategory.snacks => Icons.cookie_outlined,
-      FoodCategory.meal => Icons.rice_bowl_outlined,
-      FoodCategory.vegan => Icons.eco_outlined,
-      FoodCategory.dessert => Icons.cake_outlined,
-      FoodCategory.drinks => Icons.local_drink_outlined,
+      FoodCategory.snacks => AppIcons.snacks,
+      FoodCategory.meal => AppIcons.meal,
+      FoodCategory.vegan => AppIcons.vegan,
+      FoodCategory.dessert => AppIcons.dessert,
+      FoodCategory.drinks => AppIcons.drinks,
     };
   }
 }
