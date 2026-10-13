@@ -10,7 +10,7 @@ A Flutter app (Android, iOS optional) built from the YumQuick Food Delivery UI K
 - [x] Phase 1: core layer (Dio client, auth interceptor, typed failures, secure storage)
 - [x] Phase 2: auth (login with validation, auto-login, log out on 401)
 - [x] Phase 3: food list (pagination, debounced search, categories, sort, skeletons, pull-to-refresh, error retry)
-- [ ] Phase 4: food detail (hero image, details, quantity, Add to Cart)
+- [X] Phase 4: food detail (hero image, details, quantity, Add to Cart)
 - [ ] Phase 5: cart and Confirm Order (persistence, swipe to delete with undo)
 - [ ] Phase 6: offline support (cached first page, offline banner)
 - [ ] Phase 7: remaining tests, README, release APK
@@ -50,13 +50,30 @@ Feature-first folders, each split into data, domain and presentation layers, wit
 
 ```
 lib/
-├── main.dart
-├── app/              # app widget, theme, router, dependency injection
-├── core/             # network, error model, storage, shared widgets
+├── main.dart                 # DI setup, AuthBloc, runApp
+├── app/
+│   ├── app.dart              # MaterialApp.router + BlocProvider<AuthBloc>
+│   ├── router.dart           # go_router routes and auth redirect
+│   ├── router_refresh.dart   # AuthBloc stream → router refresh
+│   ├── di.dart               # get_it registrations
+│   └── theme/                # colours, text styles, radii from Figma
+├── core/
+│   ├── bloc/                 # shared event transformers (debounce)
+│   ├── error/                # Failure, Result, Dio error mapper, guard()
+│   ├── network/              # Dio client, auth interceptor, endpoints
+│   ├── session/              # session-expired events (network → auth)
+│   ├── storage/              # secure token storage
+│   ├── utils/                # price formatting
+│   └── widgets/              # header scaffold, text field, empty/error/offline views
 └── features/
-    ├── auth/         # data / domain / presentation
-    ├── food/
-    └── cart/
+    ├── auth/
+    │   ├── data/             # models, remote + local data sources, repository impl
+    │   ├── domain/           # User, AuthRepository
+    │   └── presentation/     # AuthBloc, login and splash screens, login form
+    └── food/
+        ├── data/             # RecipeModel, remote data source, repository impl
+        ├── domain/           # FoodItem, FoodCategory, FoodQuery, FoodRepository
+        └── presentation/     # FoodListBloc, FoodDetailCubit, Home and detail screens, widgets
 ```
 
 - **data:** DTOs, remote and local data sources, repository implementations.
@@ -104,6 +121,12 @@ An item can appear in more than one category. _Final rules are confirmed in Phas
 - **Hand-written JSON parsing**, no code generation, to keep the build simple within the time limit.
 - **Tokens** in `flutter_secure_storage`; **cart and offline cache** in Hive (`hive_ce`, the maintained fork).
 - **Theme scope:** only component themes with stable `*ThemeData` types are set globally; inputs and headers are dedicated widgets.
+
+- **Loading strategy:** the plain list and search paginate on the server (10 per page, `skip`/`limit`). A category merges several API values, so it is filtered on the device after one request for all 50 recipes; with a dataset this small that is cheaper than paging through filtered results.
+- **Sort By** offers Top rated, Name and Quickest, all sorted by the API. Price sort is left out because prices are derived on the device.
+- **Stale responses:** each new query gets a request id and older responses are dropped, so a slow request never overwrites newer results.
+
+- **Detail without a second request:** the list already returns full recipes, so the card passes its item to the detail screen, which opens instantly. `GET /recipes/{id}` is used only when the screen opens without one (deep link) and for retry.
 
 _More added as the build progresses._
 
