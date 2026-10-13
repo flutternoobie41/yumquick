@@ -98,6 +98,7 @@ Categories from the design mapped to the API:
 - Token refresh: a 401 just logs you out, as the task asks
 - Offline mode for categories and search, only the first page is cached
 - **Bottom navigation bar and side drawer.** Most of their tabs (favourites, orders, profile, help) lead to screens outside the task's scope, and empty tabs would look unfinished. Cart and logout are in the Home header instead.
+- **Onboarding pages.** The design has three intro pages (Order For Food, Easy Payment, Fast Delivery) before login. They're optional for the task and add nothing to the flows being tested, so the app goes from the splash straight to login. If added, they'd show only on the first launch, with a "seen" flag in Hive and one extra check in the router redirect.
 - App icon (still the default one)
 - Didn't test on iOS
 - Release APK is signed with the debug key

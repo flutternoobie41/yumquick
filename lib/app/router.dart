@@ -22,8 +22,9 @@ abstract final class AppRoutes {
   static const String confirmOrder = '/cart/confirm';
 }
 
-/// App router. Auth decides where the user may go:
-/// unknown session → splash, logged out → login, logged in → app.
+/// App router. The splash plays its intro first, then auth decides where
+/// the user may go: unknown session → splash, logged out → login,
+/// logged in → app.
 GoRouter createRouter({
   required AuthBloc authBloc,
   required Listenable refreshListenable,
@@ -34,6 +35,10 @@ GoRouter createRouter({
     refreshListenable: Listenable.merge([refreshListenable, splashDone]),
     redirect: (context, state) {
       final location = state.matchedLocation;
+      // Stay on the splash until its intro has played.
+      if (!splashDone.value) {
+        return location == AppRoutes.splash ? null : AppRoutes.splash;
+      }
       return switch (authBloc.state) {
         AuthUnknown() => location == AppRoutes.splash ? null : AppRoutes.splash,
         AuthAuthenticating() ||
@@ -80,10 +85,6 @@ GoRouter createRouter({
             },
           ),
         ],
-      ),
-      GoRoute(
-        path: AppRoutes.cart,
-        builder: (context, state) => const CartScreen(),
       ),
       GoRoute(
         path: AppRoutes.cart,

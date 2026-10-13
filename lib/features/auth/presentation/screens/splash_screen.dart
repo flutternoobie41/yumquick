@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yum_quick/app/theme/app_colors.dart';
+import 'package:yum_quick/app/theme/app_text_styles.dart';
 
 const _logoOnYellowAsset = 'assets/images/logo_on_yellow.png';
 const _logoOnOrangeAsset = 'assets/images/logo_on_orange.png';
@@ -24,17 +25,19 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 2200),
+    duration: const Duration(milliseconds: 3000),
   );
 
-  // Hold yellow, swap to orange, fade the tagline in, then hold orange.
+  // 0–0.45 s hold yellow, 0.45–1.35 s swap to orange, 1.35–1.8 s fade
+  // the tagline in, then hold the finished screen for 1.2 s so it can
+  // be read.
   late final Animation<double> _swap = CurvedAnimation(
     parent: _controller,
-    curve: const Interval(0.25, 0.6, curve: Curves.easeInOut),
+    curve: const Interval(0.15, 0.45, curve: Curves.easeInOut),
   );
   late final Animation<double> _tagline = CurvedAnimation(
     parent: _controller,
-    curve: const Interval(0.6, 0.8, curve: Curves.easeOut),
+    curve: const Interval(0.45, 0.6, curve: Curves.easeOut),
   );
 
   @override
@@ -55,7 +58,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -85,16 +87,17 @@ class _SplashScreenState extends State<SplashScreen>
                   semanticLabel: 'YumQuick',
                 ),
                 const SizedBox(height: 48),
-                Opacity(
+                              Opacity(
                   opacity: tagline,
                   child: Transform.translate(
                     offset: Offset(0, 12 * (1 - tagline)),
-                    child: Text(
-                      'Your favourite meals,\ndelivered quick.',
-                      textAlign: TextAlign.center,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: AppColors.font2,
-                        fontWeight: FontWeight.w500,
+                    child: const SizedBox(
+                      width: 260,
+                      child: Text(
+                        'Snacks, meals, desserts and drinks, '
+                        'delivered hot and fresh to your door.',
+                        textAlign: TextAlign.center,
+                        style: _taglineStyle,
                       ),
                     ),
                   ),
@@ -107,6 +110,13 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 }
+const _taglineStyle = TextStyle(
+  fontFamily: AppTextStyles.fontFamily,
+  fontSize: 14,
+  fontWeight: FontWeight.w500,
+  height: 1.2,
+  color: AppColors.font2,
+);
 
 /// Fades from the yellow-screen version of an image to the orange one.
 class _CrossFade extends StatelessWidget {
