@@ -1,39 +1,27 @@
-# YumQuick: Food Delivery App
+# YumQuick
 
-A Flutter app (Android, iOS optional) built from the YumQuick Food Delivery UI Kit for the Bictree Flutter Developer task. Users log in, browse food items, view details and manage a cart. All data comes from [DummyJSON](https://dummyjson.com).
+Food delivery app for the Bictree Flutter task. Built from the YumQuick Figma kit, data from [DummyJSON](https://dummyjson.com).
 
-> **Status:** work in progress, built in phases. See [Progress](#progress).
+You can log in, browse and search dishes, open a dish, add it to the cart and place an order (locally, no API call).
 
-## Progress
+**APK:** https://github.com/<USER>/<REPO>/releases/latest
+**Login:** `emilys` / `emilyspass`
 
-- [x] Phase 0: project setup, lints, Material 3 theme, README skeleton
-- [x] Phase 1: core layer (Dio client, auth interceptor, typed failures, secure storage)
-- [x] Phase 2: auth (login with validation, auto-login, log out on 401)
-- [x] Phase 3: food list (pagination, debounced search, categories, sort, skeletons, pull-to-refresh, error retry)
-- [X] Phase 4: food detail (hero image, details, quantity, Add to Cart)
-- [X] Phase 5: cart and Confirm Order (persistence, swipe to delete with undo)
-- [ ] Phase 6: offline support (cached first page, offline banner)
-- [ ] Phase 7: remaining tests, README, release APK
+## Running it
 
-## Download
-
-APK: _added with the first release._
-
-## Setup and run
-
-**Flutter version used:** _to be filled from `flutter --version`._
+Flutter `<FLUTTER VERSION>`
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-Test account: `emilys` / `emilyspass` (DummyJSON test user).
+Release APK: `flutter build apk --release`
 
-Release build:
+The `*.g.dart` files are committed. If you change a model, run:
 
 ```bash
-flutter build apk --release
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ## Tests
@@ -42,121 +30,99 @@ flutter build apk --release
 flutter test
 ```
 
-_Test results are added in Phase 7._
+Result: `<paste last line, e.g. +26: All tests passed!>`
 
-## Architecture
+- `cart_cubit_test.dart`: cart logic (add/merge, quantity limits, remove + undo, clear) and the totals
+- `food_repository_test.dart`: first page gets cached, cache is used when offline, 401 isn't hidden by the cache
+- `login_screen_test.dart`: form validation, submit, error message
+- `error_mapper_test.dart`: Dio errors → typed failures
+- `food_category_test.dart`: category rules
+- `widget_test.dart`: app starts on the splash
 
-Feature-first folders, each split into data, domain and presentation layers, with the repository pattern between data and domain.
+## Structure
+
+Feature folders, each with `data / domain / presentation`, plus a shared `core`.
 
 ```
 lib/
-├── main.dart                 # DI setup, AuthBloc, runApp
-├── app/
-│   ├── app.dart              # MaterialApp.router + BlocProvider<AuthBloc>
-│   ├── router.dart           # go_router routes and auth redirect
-│   ├── router_refresh.dart   # AuthBloc stream → router refresh
-│   ├── di.dart               # get_it registrations
-│   └── theme/                # colours, text styles, radii from Figma
-├── core/
-│   ├── bloc/                 # shared event transformers (debounce)
-│   ├── error/                # Failure, Result, Dio error mapper, guard()
-│   ├── network/              # Dio client, auth interceptor, endpoints
-│   ├── session/              # session-expired events (network → auth)
-│   ├── storage/              # secure token storage
-│   ├── utils/                # price formatting
-│   └── widgets/              # header scaffold, text field, empty/error/offline views
-└── features/
-    ├── auth/
-    │   ├── data/             # models, remote + local data sources, repository impl
-    │   ├── domain/           # User, AuthRepository
-    │   └── presentation/     # AuthBloc, login and splash screens, login form
-    ├── food/
-    │   ├── data/             # RecipeModel, remote + local (offline cache) data sources, repository impl
-    │   ├── domain/           # FoodItem, FoodCategory, FoodQuery, FoodRepository
-    │   └── presentation/     # FoodListBloc, FoodDetailCubit, Home and detail screens, screens,widgets
-    └── cart/
-        ├── data/             # CartItemModel, Hive data source, repository impl
-        ├── domain/           # CartItem, Cart (totals), CartRepository
-        └── presentation/     # CartCubit, Cart and Confirm Order screens, widgets
-
-- **data:** DTOs, remote and local data sources, repository implementations.
-- **domain:** entities and repository contracts, with no Flutter or Dio imports.
-- **presentation:** Blocs/Cubits, screens and widgets.
-
-_A fuller breakdown is added as each layer lands._
-
-## State management: Bloc
-
-Bloc gives an explicit, traceable event-to-state flow, and its event transformers handle debounced search and duplicate page loads natively. `bloc_test` makes state sequences easy to assert. Cubits are used where there are no event streams to control (cart, detail).
-
-## Mock prices
-
-The recipes API has no price field. Each item gets a stable price derived from its id:
-
-```dart
-double priceFor(int id) => 4.99 + (id * 37) % 20; // $4.99 to $23.99
+  app/        router, theme, app widget
+  core/       di, network (Dio + auth interceptor), errors, storage, shared widgets
+  features/
+    auth/     login, splash, session
+    food/     home list, detail, offline cache
+    cart/     cart, confirm order
 ```
 
-The same item always shows the same price, across sessions and devices.
+- Domain has the entities and repository interfaces, no Flutter/Dio code.
+- Data sources throw. Repositories wrap every call in `guard()` and return `Result` (data or a typed `Failure`), so the UI never sees a raw exception.
+- On a 401 the interceptor clears the token and AuthBloc sends you back to login. go_router redirects based on AuthBloc's state.
 
-## Category mapping
+## Why Bloc
 
-The design's categories map to the API's `mealType` and `tags` values (50 recipes in total):
+I like that every change is an explicit event → state, and Bloc's event transformers handle the debounced search and "don't load the same page twice" without extra code. `bloc_test` also makes the cart tests short. I used Cubits where there's nothing to debounce (cart, detail).
 
-| Design  | Rule |
-|---------|------|
-| Snacks  | `mealType` contains `Snack`, `Snacks` or `Appetizer` (the API uses both spellings) |
-| Meal    | `mealType` contains `Breakfast`, `Lunch` or `Dinner` |
-| Vegan   | No ingredient matches an animal-product keyword (meat, seafood, dairy, egg, honey). The API has no vegan tag, and only one recipe is tagged `Vegetarian`. |
-| Dessert | `mealType` contains `Dessert`, or `tags` contains `Dessert` |
-| Drinks  | `mealType` contains `Beverage` |
+## Prices and categories
 
-An item can appear in more than one category. _Final rules are confirmed in Phase 3._
+The API has no prices, so each recipe gets a fixed one from its id:
 
-## Design
+```dart
+double mockPriceFor(int id) => 4.99 + (id * 37) % 20; // $4.99 – $23.99
+```
 
-- Colours, text styles and radii come from the Figma file's variables (`lib/app/theme/`).
-- Font: **League Spartan** (Light, Regular, Medium, Bold), bundled in `assets/fonts` under the SIL Open Font License, so text renders correctly on a first launch without network.
-- Screens the design doesn't cover (food detail, empty, error and offline states) are designed in the same style.
+Same item, same price, every time. Cart tax/fees are 5% of the subtotal and delivery is a flat $2.99.
 
-## Decisions and trade-offs
+Categories from the design mapped to the API:
 
-- **Hand-written JSON parsing**, no code generation, to keep the build simple within the time limit.
-- **Tokens** in `flutter_secure_storage`; **cart and offline cache** in Hive (`hive_ce`, the maintained fork).
-- **Theme scope:** only component themes with stable `*ThemeData` types are set globally; inputs and headers are dedicated widgets.
+- **Snacks**: mealType Snack, Snacks or Appetizer (the API spells it both ways)
+- **Meal**: mealType Breakfast, Lunch or Dinner
+- **Vegan**: no ingredient matching an animal-product keyword. The API has no vegan tag, so this is a rough keyword check (e.g. coconut milk still counts as dairy)
+- **Dessert**: mealType or tag Dessert
+- **Drinks**: mealType Beverage
 
-- **Loading strategy:** the plain list and search paginate on the server (10 per page, `skip`/`limit`). A category merges several API values, so it is filtered on the device after one request for all 50 recipes; with a dataset this small that is cheaper than paging through filtered results.
-- **Sort By** offers Top rated, Name and Quickest, all sorted by the API. Price sort is left out because prices are derived on the device.
-- **Stale responses:** each new query gets a request id and older responses are dropped, so a slow request never overwrites newer results.
+## Decisions / trade-offs
 
-- **Detail without a second request:** the list already returns full recipes, so the card passes its item to the detail screen, which opens instantly. `GET /recipes/{id}` is used only when the screen opens without one (deep link) and for retry.
-
-- **Cart pricing:** tax and fees are 5% of the subtotal and delivery is a flat $2.99 (both $0 for an empty cart), all rounded to cents. The rules live in the pure `Cart` class and are unit tested.
-- **Cart storage:** the cart is saved to a Hive box as one JSON string after every change, so no Hive type adapters are needed. Unreadable data starts an empty cart instead of crashing.
-- **Undo:** removing a line remembers it and its position, so Undo puts it back in the same place. Quantity changes never remove a line; only the swipe does, so every removal can be undone.
-- **Place Order is local:** it confirms, returns to Home and empties the cart. No API call, as the task asks.
-
-- **Offline support:** the first page of the default list is saved to Hive after every successful load. When that page can't be loaded because the network is down, the saved items are shown with an offline banner, and pull-to-refresh replaces them once back online. Only network failures fall back to the cache; a 401 still logs out. Other queries (category, search, next page) need the network and show the error view with retry. Images come from `cached_network_image`'s disk cache, so photos seen before also load offline.
-_More added as the build progresses._
+- Search, categories and sort are all on Home instead of separate Menu and Search screens. Felt better than three half-done screens in the time I had.
+- Plain list and search are paginated by the API (10 at a time). Categories combine several API values, so for those I fetch all 50 recipes once and filter on the phone.
+- Sort is Top rated / Name / Quickest, all done by the API. No price sort since prices are made up on the phone.
+- Detail screen gets the item passed from the list, so it opens instantly. It only calls `/recipes/{id}` when opened without one.
+- Data calls go through DummyJSON's `/auth/...` prefix so an expired token actually returns a 401.
+- Offline: the first page of the home list is saved in Hive. If that load fails because there's no network, the saved items show with an offline banner. Other queries just show the error screen with retry.
+- Cart is saved in Hive as a JSON string on every change. Tokens and the cached user are in flutter_secure_storage.
+- Removing from the cart is only by swipe, so it can always be undone. The − button stops at 1.
+- Food detail, empty, error and offline screens aren't in the design, so I made them in the same style. Font is League Spartan, bundled in the app.
 
 ## Skipped
 
-_Filled in at submission._
+- Separate Menu and Search & Filter screens (so no price slider or rating chips)
+- Best Seller row and the banner on Home
+- Token refresh: a 401 just logs you out, as the task asks
+- Offline mode for categories and search, only the first page is cached
+- App icon (still the default one)
+- Didn't test on iOS
+- Release APK is signed with the debug key
 
-## What I would improve with more time
+## With more time
 
-_Filled in at submission._
+- Build the Menu and Search & Filter screens properly
+- Refresh the token before logging out
+- Auto-refresh when the network comes back
+- Clear or separate the cart per user on logout
+- Integration tests for login → cart → order, and CI for analyze + tests
 
 ## Time spent
 
-| Phase | Hours |
-|-------|-------|
-| 0. Setup | _ |
-| 1. Core | _ |
-| 2. Auth | _ |
-| 3. Food list | _ |
-| 4. Detail | _ |
-| 5. Cart and order | _ |
-| 6. Offline | _ |
-| 7. Tests and release | _ |
-| **Total** | _ |
+About **_ hours** total.
+
+## Time spent
+
+About **9 hours** total, spread over two days.
+
+| | Hours |
+|---|---|
+| Setup, theme | 1 |
+| Core + auth | 2.5 |
+| Home list | 2 |
+| Detail | 1 |
+| Cart + order | 1 |
+| Offline | 0.75 |
+| Tests, release, README | 0.75 |
