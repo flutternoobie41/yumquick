@@ -4,7 +4,7 @@ Food delivery app for the Bictree Flutter task. Built from the YumQuick Figma ki
 
 You can log in, browse and search dishes, open a dish, add it to the cart and place an order (locally, no API call).
 
-**APK:** https://github.com/<USER>/<REPO>/releases/latest
+**APK:** https://github.com/flutternoobie41/yumquick/releases/latest
 **Login:** `emilys` / `emilyspass`
 
 ## How to use
