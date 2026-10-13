@@ -10,6 +10,9 @@ import 'package:yum_quick/features/auth/data/data_sources/auth_local_data_source
 import 'package:yum_quick/features/auth/data/data_sources/auth_remote_data_sources.dart';
 import 'package:yum_quick/features/auth/data/repository/repository_impl.dart';
 import 'package:yum_quick/features/auth/domain/repository/auth_repository.dart';
+import 'package:yum_quick/features/food/data/data_source.dart/food_remote_data_source.dart';
+import 'package:yum_quick/features/food/domain/repository/food_repository.dart';
+import 'package:yum_quick/features/food/repository/food_repository_impl.dart';
 
 /// Service locator for data sources and repositories.
 /// Blocs are not registered here; they are provided with BlocProvider.
@@ -44,5 +47,14 @@ Future<void> setupDependencies() async {
     )
     ..registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(remote: getIt(), local: getIt()),
+    );
+
+     // Food
+  getIt
+    ..registerLazySingleton<FoodRemoteDataSource>(
+      () => FoodRemoteDataSource(getIt()),
+    )
+    ..registerLazySingleton<FoodRepository>(
+      () => FoodRepositoryImpl(remote: getIt()),
     );
 }
