@@ -64,9 +64,11 @@ class _TitleBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final leading = this.leading;
-
+ // Full width: without it the Stack shrinks to the title's width and
+    // the back button lands on top of the title.
     return SizedBox(
       height: 88,
+      width: double.infinity,
       child: Stack(
         alignment: Alignment.center,
         children: [
