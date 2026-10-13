@@ -11,7 +11,6 @@ import 'package:yum_quick/features/food/domain/entities/food_item.dart';
 import 'package:yum_quick/features/food/domain/entities/food_query.dart';
 import 'package:yum_quick/features/food/domain/repository/food_repository.dart';
 
-
 part 'food_list_event.dart';
 part 'food_list_state.dart';
 
@@ -141,6 +140,8 @@ class FoodListBloc extends Bloc<FoodListEvent, FoodListState> {
         status: showItems ? state.status : FoodListStatus.loading,
         items: showItems ? state.items : const [],
         isLoadingMore: false,
+        // The banner belongs to the items on screen; a new query clears it.
+        isOffline: showItems && state.isOffline,
       ),
     );
 
@@ -156,6 +157,7 @@ class FoodListBloc extends Bloc<FoodListEvent, FoodListState> {
             status: FoodListStatus.success,
             items: data.items,
             hasMore: data.hasMore,
+            isOffline: data.isFromCache,
           ),
         );
       case Err(failure: CancelledFailure()):

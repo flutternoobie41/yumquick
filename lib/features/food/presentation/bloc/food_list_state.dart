@@ -11,6 +11,7 @@ final class FoodListState extends Equatable {
     this.items = const [],
     this.hasMore = false,
     this.isLoadingMore = false,
+    this.isOffline = false,
     this.failure,
   });
 
@@ -19,6 +20,9 @@ final class FoodListState extends Equatable {
   final List<FoodItem> items;
   final bool hasMore;
   final bool isLoadingMore;
+
+  /// True while the list shows saved items because the network is down.
+  final bool isOffline;
 
   /// The latest error. With no items the screen shows an error view;
   /// with items it is shown as a snackbar.
@@ -32,6 +36,7 @@ final class FoodListState extends Equatable {
     List<FoodItem>? items,
     bool? hasMore,
     bool? isLoadingMore,
+    bool? isOffline,
     Failure? failure,
   }) {
     return FoodListState(
@@ -40,11 +45,12 @@ final class FoodListState extends Equatable {
       items: items ?? this.items,
       hasMore: hasMore ?? this.hasMore,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      isOffline: isOffline ?? this.isOffline,
       failure: failure,
     );
   }
 
   @override
   List<Object?> get props =>
-      [status, query, items, hasMore, isLoadingMore, failure];
+      [status, query, items, hasMore, isLoadingMore, isOffline, failure];
 }

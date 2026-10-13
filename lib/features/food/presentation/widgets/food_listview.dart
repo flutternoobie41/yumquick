@@ -9,6 +9,7 @@ import 'package:yum_quick/app/theme/app_colors.dart';
 import 'package:yum_quick/app/theme/app_dimens.dart';
 import 'package:yum_quick/core/widgets/empty_view.dart';
 import 'package:yum_quick/core/widgets/error_view.dart';
+import 'package:yum_quick/core/widgets/offline_banner.dart';
 import 'package:yum_quick/features/food/domain/entities/food_item.dart';
 import 'package:yum_quick/features/food/presentation/bloc/food_list_bloc.dart';
 import 'package:yum_quick/features/food/presentation/widgets/category_selector.dart';
@@ -74,6 +75,8 @@ class _FoodListViewState extends State<FoodListView> {
             controller: _scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
+              if (state.isOffline)
+                const SliverToBoxAdapter(child: OfflineBanner()),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(
                   AppSpacing.screenHorizontal,
@@ -199,17 +202,14 @@ class _FoodGrid extends StatelessWidget {
       padding: _gridPadding,
       sliver: SliverGrid(
         gridDelegate: _gridDelegate,
-        delegate: SliverChildBuilderDelegate(
-         (context, index) {
-            final item = items[index];
-            return FoodCard(
-              item: item,
-              onTap: () =>
-                  context.push(AppRoutes.foodDetail(item.id), extra: item),
-            );
-          },
-          childCount: items.length
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final item = items[index];
+          return FoodCard(
+            item: item,
+            onTap: () =>
+                context.push(AppRoutes.foodDetail(item.id), extra: item),
+          );
+        }, childCount: items.length),
       ),
     );
   }
