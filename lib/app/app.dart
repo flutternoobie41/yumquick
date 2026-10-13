@@ -5,15 +5,21 @@ import 'package:yum_quick/app/router.dart';
 import 'package:yum_quick/app/router_refresh.dart';
 import 'package:yum_quick/app/theme/app_theme.dart';
 import 'package:yum_quick/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:yum_quick/features/cart/presentation/cubit/cart_cubit.dart';
 
 /// Root widget of the app.
 ///
-/// [authBloc] is created in `main` and lives as long as the app. It is
-/// passed in so tests can supply a mock.
+/// [authBloc] and [cartCubit] are created in `main` and live as long as
+/// the app. They are passed in so tests can supply mocks.
 class YumQUickApp extends StatefulWidget {
-  const YumQUickApp({super.key, required this.authBloc});
+  const YumQUickApp({
+    super.key,
+    required this.authBloc,
+    required this.cartCubit,
+  });
 
   final AuthBloc authBloc;
+  final CartCubit cartCubit;
 
   @override
   State<YumQUickApp> createState() => _YumQUickAppState();
@@ -36,8 +42,11 @@ class _YumQUickAppState extends State<YumQUickApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: widget.authBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: widget.authBloc),
+        BlocProvider.value(value: widget.cartCubit),
+      ],
       child: MaterialApp.router(
         title: 'YumQuick',
         debugShowCheckedModeBanner: false,

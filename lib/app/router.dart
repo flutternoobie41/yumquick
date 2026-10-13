@@ -5,6 +5,7 @@ import 'package:yum_quick/core/di/di.dart';
 import 'package:yum_quick/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:yum_quick/features/auth/presentation/screens/login_screen.dart';
 import 'package:yum_quick/features/auth/presentation/screens/splash_screen.dart';
+import 'package:yum_quick/features/cart/presentation/screens/cart_screen.dart';
 import 'package:yum_quick/features/food/domain/entities/food_item.dart';
 import 'package:yum_quick/features/food/presentation/bloc/food_list_bloc.dart';
 import 'package:yum_quick/features/food/presentation/cubit/food_detail_cubit.dart';
@@ -16,6 +17,8 @@ abstract final class AppRoutes {
   static const String login = '/login';
   static const String home = '/';
   static String foodDetail(int id) => '/food/$id';
+  static const String cart = '/cart';
+  static const String confirmOrder = '/cart/confirm';
 }
 
 /// App router. Auth decides where the user may go:
@@ -49,11 +52,11 @@ GoRouter createRouter({
         path: AppRoutes.login,
         builder: (context, state) => const LoginScreen(),
       ),
-       GoRoute(
+      GoRoute(
         path: AppRoutes.home,
         builder: (context, state) => BlocProvider(
-          create: (_) => FoodListBloc(repository: getIt())
-            ..add(const FoodListStarted()),
+          create: (_) =>
+              FoodListBloc(repository: getIt())..add(const FoodListStarted()),
           child: const HomeScreen(),
         ),
         routes: [
@@ -73,6 +76,10 @@ GoRouter createRouter({
             },
           ),
         ],
+      ),
+        GoRoute(
+        path: AppRoutes.cart,
+        builder: (context, state) => const CartScreen(),
       ),
     ],
   );

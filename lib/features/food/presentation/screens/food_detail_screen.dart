@@ -5,8 +5,11 @@ import 'package:yum_quick/app/router.dart';
 import 'package:yum_quick/app/theme/app_colors.dart';
 import 'package:yum_quick/app/theme/app_text_styles.dart';
 import 'package:yum_quick/app/utils/price_format.dart';
+import 'package:yum_quick/core/widgets/app_back_button.dart';
 import 'package:yum_quick/core/widgets/error_view.dart';
 import 'package:yum_quick/core/widgets/header_scaffold.dart';
+import 'package:yum_quick/features/cart/domain/entities/cart_items.dart';
+import 'package:yum_quick/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:yum_quick/features/food/domain/entities/food_item.dart';
 import 'package:yum_quick/features/food/presentation/cubit/food_detail_cubit.dart';
 import 'package:yum_quick/features/food/presentation/widgets/food_detail_content.dart';
@@ -20,21 +23,7 @@ class FoodDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HeaderScaffold(
       title: 'Details',
-      leading: IconButton(
-        tooltip: 'Back',
-        onPressed: () {
-          // Opened from a deep link there is nothing to pop back to.
-          if (context.canPop()) {
-            context.pop();
-          } else {
-            context.go(AppRoutes.home);
-          }
-        },
-        icon: const Icon(
-          Icons.arrow_back_ios_new_rounded,
-          color: AppColors.orangeBase,
-        ),
-      ),
+      leading: const AppBackButton(),
       body: BlocBuilder<FoodDetailCubit, FoodDetailState>(
         builder: (context, state) {
           final item = state.item;
@@ -77,11 +66,26 @@ class _AddToCartBar extends StatelessWidget {
   final double total;
 
   void _addToCart(BuildContext context) {
-    // Phase 5 adds the item to CartCubit here.
+    context.read<CartCubit>().add(
+          CartItem(
+            foodId: item.id,
+            name: item.name,
+            imageUrl: item.imageUrl,
+            unitPrice: item.price,
+            quantity: quantity,
+          ),
+        );
+    final router = GoRouter.of(context);
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        SnackBar(content: Text('Added $quantity × ${item.name} to your cart')),
+        SnackBar(
+          content: Text('Added $quantity × ${item.name}'),
+          action: SnackBarAction(
+            label: 'View cart',
+            onPressed: () => router.push(AppRoutes.cart),
+          ),
+        ),
       );
   }
 

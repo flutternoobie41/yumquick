@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:yum_quick/app/router.dart';
 import 'package:yum_quick/app/theme/app_colors.dart';
 import 'package:yum_quick/app/theme/app_dimens.dart';
 import 'package:yum_quick/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:yum_quick/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:yum_quick/features/food/presentation/bloc/food_list_bloc.dart';
 
 /// Home's yellow header: search bar, log out, and a greeting.
@@ -26,7 +29,9 @@ class HomeHeader extends StatelessWidget {
           Row(
             children: [
               const Expanded(child: _SearchField()),
-              const SizedBox(width: 8),
+               const SizedBox(width: 8),
+              const _CartButton(),
+              const SizedBox(width: 4),
               IconButton.filled(
                 tooltip: 'Log out',
                 style: IconButton.styleFrom(backgroundColor: AppColors.font2),
@@ -65,6 +70,33 @@ class HomeHeader extends StatelessWidget {
       return 'Good Afternoon';
     }
     return 'Good Evening';
+  }
+}
+
+/// Cart icon with a badge showing how many items are in the cart.
+class _CartButton extends StatelessWidget {
+  const _CartButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final count = context.select<CartCubit, int>(
+      (cubit) => cubit.state.cart.itemCount,
+    );
+
+    return IconButton.filled(
+      tooltip: 'Cart',
+      style: IconButton.styleFrom(backgroundColor: AppColors.font2),
+      onPressed: () => context.push(AppRoutes.cart),
+      icon: Badge(
+        isLabelVisible: count > 0,
+        label: Text('$count'),
+        backgroundColor: AppColors.text2,
+        child: const Icon(
+          Icons.shopping_cart_outlined,
+          color: AppColors.orangeBase,
+        ),
+      ),
+    );
   }
 }
 
