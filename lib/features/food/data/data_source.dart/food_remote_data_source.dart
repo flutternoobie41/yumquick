@@ -38,4 +38,12 @@ class FoodRemoteDataSource {
     final body = response.data ?? (throw const FormatException('Empty body'));
     return RecipesResponseModel.fromJson(body);
   }
+
+  Future<RecipeModel> fetchRecipe(int id) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      ApiEndpoints.recipe(id),
+    );
+    final body = response.data ?? (throw const FormatException('Empty body'));
+    return RecipeModel.fromJson(body);
+  }
 }

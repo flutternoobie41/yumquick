@@ -2,6 +2,7 @@
 import 'package:yum_quick/core/error/error_gaurd.dart';
 import 'package:yum_quick/core/error/result.dart';
 import 'package:yum_quick/features/food/data/data_source.dart/food_remote_data_source.dart';
+import 'package:yum_quick/features/food/domain/entities/food_item.dart';
 import 'package:yum_quick/features/food/domain/entities/food_query.dart';
 import 'package:yum_quick/features/food/domain/repository/food_repository.dart';
 
@@ -51,5 +52,9 @@ class FoodRepositoryImpl implements FoodRepository {
           .toList();
       return FoodPage(items: items, hasMore: false);
     });
+  }
+    @override
+  Future<Result<FoodItem>> getFood(int id) {
+    return guard(() async => (await _remote.fetchRecipe(id)).toEntity());
   }
 }
