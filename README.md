@@ -7,9 +7,9 @@ A Flutter app (Android, iOS optional) built from the YumQuick Food Delivery UI K
 ## Progress
 
 - [x] Phase 0: project setup, lints, Material 3 theme, README skeleton
-- [ ] Phase 1: core layer (Dio client, auth interceptor, typed failures, secure storage)
-- [ ] Phase 2: auth (login with validation, auto-login, log out on 401)
-- [ ] Phase 3: food list (pagination, debounced search, categories, sort, skeletons, pull-to-refresh, error retry)
+- [x] Phase 1: core layer (Dio client, auth interceptor, typed failures, secure storage)
+- [x] Phase 2: auth (login with validation, auto-login, log out on 401)
+- [x] Phase 3: food list (pagination, debounced search, categories, sort, skeletons, pull-to-refresh, error retry)
 - [ ] Phase 4: food detail (hero image, details, quantity, Add to Cart)
 - [ ] Phase 5: cart and Confirm Order (persistence, swipe to delete with undo)
 - [ ] Phase 6: offline support (cached first page, offline banner)
