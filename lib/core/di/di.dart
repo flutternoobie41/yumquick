@@ -13,9 +13,10 @@ import 'package:yum_quick/features/auth/domain/repository/auth_repository.dart';
 import 'package:yum_quick/features/cart/data/data_source/cart_local_data_source.dart';
 import 'package:yum_quick/features/cart/data/repository/cart_repository_impl.dart';
 import 'package:yum_quick/features/cart/domain/repository/cart_repository.dart';
+import 'package:yum_quick/features/food/data/data_source.dart/food_local_data_source.dart';
 import 'package:yum_quick/features/food/data/data_source.dart/food_remote_data_source.dart';
 import 'package:yum_quick/features/food/domain/repository/food_repository.dart';
-import 'package:yum_quick/features/food/repository/food_repository_impl.dart';
+import 'package:yum_quick/features/food/data/repository/food_repository_impl.dart';
 
 /// Service locator for data sources and repositories.
 /// Blocs are not registered here; they are provided with BlocProvider.
@@ -25,6 +26,7 @@ final GetIt getIt = GetIt.instance;
 Future<void> setupDependencies() async {
   await Hive.initFlutter();
   final cartBox = await Hive.openBox<String>(CartLocalDataSource.boxName);
+  final foodBox = await Hive.openBox<String>(FoodLocalDataSource.boxName);
   // Core
   getIt
     ..registerLazySingleton<FlutterSecureStorage>(
@@ -59,11 +61,14 @@ Future<void> setupDependencies() async {
     ..registerLazySingleton<FoodRemoteDataSource>(
       () => FoodRemoteDataSource(getIt()),
     )
+    ..registerLazySingleton<FoodLocalDataSource>(
+      () => FoodLocalDataSource(foodBox),
+    )
     ..registerLazySingleton<FoodRepository>(
-      () => FoodRepositoryImpl(remote: getIt()),
+      () => FoodRepositoryImpl(remote: getIt(), local: getIt()),
     );
 
-      // Cart
+  // Cart
   getIt
     ..registerLazySingleton<CartLocalDataSource>(
       () => CartLocalDataSource(cartBox),

@@ -8,12 +8,13 @@ import 'package:yum_quick/app/utils/price_format.dart';
 import 'package:yum_quick/core/widgets/app_back_button.dart';
 import 'package:yum_quick/core/widgets/error_view.dart';
 import 'package:yum_quick/core/widgets/header_scaffold.dart';
+import 'package:yum_quick/core/widgets/quantity_selector.dart';
 import 'package:yum_quick/features/cart/domain/entities/cart_items.dart';
 import 'package:yum_quick/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:yum_quick/features/food/domain/entities/food_item.dart';
 import 'package:yum_quick/features/food/presentation/cubit/food_detail_cubit.dart';
 import 'package:yum_quick/features/food/presentation/widgets/food_detail_content.dart';
-import 'package:yum_quick/features/food/presentation/widgets/quantity_selector.dart';
+
 
 /// Food detail, designed in the kit's style since the design has none.
 class FoodDetailScreen extends StatelessWidget {

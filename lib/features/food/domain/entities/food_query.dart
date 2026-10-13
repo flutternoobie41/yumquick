@@ -31,11 +31,18 @@ class FoodQuery extends Equatable {
 
 /// One page of results.
 class FoodPage extends Equatable {
-  const FoodPage({required this.items, required this.hasMore});
+  const FoodPage({
+    required this.items,
+    required this.hasMore,
+    this.isFromCache = false,
+  });
 
   final List<FoodItem> items;
   final bool hasMore;
 
+  /// True when the network was unreachable and these are saved items.
+  final bool isFromCache;
+
   @override
-  List<Object?> get props => [items, hasMore];
+  List<Object?> get props => [items, hasMore, isFromCache];
 }
