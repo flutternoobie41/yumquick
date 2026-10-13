@@ -15,8 +15,8 @@ import 'package:yum_quick/features/cart/data/repository/cart_repository_impl.dar
 import 'package:yum_quick/features/cart/domain/repository/cart_repository.dart';
 import 'package:yum_quick/features/food/data/data_source.dart/food_local_data_source.dart';
 import 'package:yum_quick/features/food/data/data_source.dart/food_remote_data_source.dart';
-import 'package:yum_quick/features/food/domain/repository/food_repository.dart';
 import 'package:yum_quick/features/food/data/repository/food_repository_impl.dart';
+import 'package:yum_quick/features/food/domain/repository/food_repository.dart';
 
 /// Service locator for data sources and repositories.
 /// Blocs are not registered here; they are provided with BlocProvider.
