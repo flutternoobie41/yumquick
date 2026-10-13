@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yum_quick/core/di/di.dart';
 import 'package:yum_quick/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:yum_quick/features/auth/presentation/screens/home_screen.dart';
 import 'package:yum_quick/features/auth/presentation/screens/login_screen.dart';
 import 'package:yum_quick/features/auth/presentation/screens/splash_screen.dart';
+import 'package:yum_quick/features/food/presentation/bloc/food_list_bloc.dart';
+import 'package:yum_quick/features/food/presentation/screens/home_screen.dart';
 
 abstract final class AppRoutes {
   static const String splash = '/splash';
@@ -23,9 +26,9 @@ GoRouter createRouter({
     redirect: (context, state) {
       final location = state.matchedLocation;
       return switch (authBloc.state) {
-        AuthUnknown() =>
-          location == AppRoutes.splash ? null : AppRoutes.splash,
-        AuthAuthenticating() || AuthUnauthenticated() =>
+        AuthUnknown() => location == AppRoutes.splash ? null : AppRoutes.splash,
+        AuthAuthenticating() ||
+        AuthUnauthenticated() =>
           location == AppRoutes.login ? null : AppRoutes.login,
         AuthAuthenticated() =>
           location == AppRoutes.login || location == AppRoutes.splash
@@ -44,7 +47,11 @@ GoRouter createRouter({
       ),
       GoRoute(
         path: AppRoutes.home,
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => BlocProvider(
+          create: (_) =>
+              FoodListBloc(repository: getIt())..add(const FoodListStarted()),
+          child: const HomeScreen(),
+        ),
       ),
     ],
   );
